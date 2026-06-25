@@ -1,0 +1,191 @@
+% Parte 2 — Análisis LR(1) para la(s) gramática(s) de números romanos
+\documentclass[a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\title{Práctica 3 — Parte 2: Análisis de las gramáticas de números romanos}
+\author{Alumno: Nombre Apellido}
+\date{10 de diciembre de 2025}
+
+\begin{document}
+\maketitle
+
+\section*{Observación inicial}
+En el repositorio hay implementadas dos variantes de la gramática de números romanos: \texttt{src/roman\_parser1.py} (G1, recursión izquierda en las producciones "bajas") y \texttt{src/roman\_parser2.py} (G2, recursión derecha). \texttt{src/roman\_parser.py} se conserva como copia de referencia.
+
+He ejecutado ambos parsers por separado para generar la traza de ejecución de PLY y ejecutar los tests. Los ficheros generados y relevantes son:
+
+\begin{itemize}
+\item \texttt{src/parsetab\_g1.py} y \texttt{src/parser\_g1.out}: tablas y salida de PLY para \texttt{roman\_parser1.py} (G1).
+\item \texttt{src/parsetab\_g2.py} y \texttt{src/parser\_g2.out}: tablas y salida de PLY para \texttt{roman\_parser2.py} (G2).
+\item \texttt{parser\_g1\_run.out} y \texttt{parser\_g2\_run.out}: logs completos (stdout/stderr) de las ejecuciones de tests con cada parser (se encuentran en la raíz del proyecto).
+\end{itemize}
+
+Estos archivos contienen la información del autómata LR(1) (items, estados) y la tabla LALR que PLY genera. A partir de \texttt{src/parser\_g1.out} y \texttt{src/parser\_g2.out} se pueden extraer S0 y las transiciones para cada gramática.
+
+\section*{Gramática (extracto)}
+Fichero: \texttt{src/parser.out} (reglas numeradas):
+\begin{verbatim}
+0  S' -> romanNumber
+1  romanNumber -> thousand hundred ten digit
+2  thousand -> M M M
+3  thousand -> M M
+4  thousand -> M
+5  thousand -> lambda
+6  small_hundred -> C C C
+7  small_hundred -> C C
+8  small_hundred -> C
+9  hundred -> C M
+10 hundred -> C D
+11 hundred -> D small_hundred
+12 hundred -> small_hundred
+13 hundred -> lambda
+14 small_ten -> X X X
+15 small_ten -> X X
+16 small_ten -> X
+17 ten -> X C
+18 ten -> X L
+19 ten -> L small_ten
+20 ten -> small_ten
+21 ten -> lambda
+22 small_digit -> I I I
+23 small_digit -> I I
+24 small_digit -> I
+25 digit -> I X
+26 digit -> I V
+27 digit -> V small_digit
+28 digit -> small_digit
+29 digit -> lambda
+30 lambda -> <empty>
+31 roman -> romanNumber
+\end{verbatim}
+
+\section{Conjuntos PRIMERO y SIGUIENTE}
+Se muestran los conjuntos calculados a partir de las producciones anteriores.
+
+\subsection*{PRIMERO (FIRST)}
+\begin{itemize}
+\item $FIRST(\text{thousand}) = \{M, \epsilon\}$
+\item $FIRST(\text{small\_hundred}) = \{C\}$
+\item $FIRST(\text{hundred}) = \{C, D, \epsilon\}$
+\item $FIRST(\text{small\_ten}) = \{X\}$
+\item $FIRST(\text{ten}) = \{X, L, \epsilon\}$
+\item $FIRST(\text{small\_digit}) = \{I\}$
+\item $FIRST(\text{digit}) = \{I, V, \epsilon\}$
+\item $FIRST(\text{lambda}) = \{\epsilon\}$
+\item $FIRST(\text{romanNumber}) = \{M, C, D, X, L, I, V, \epsilon\}$
+\item $FIRST(\text{roman}) = FIRST(romanNumber)$
+\end{itemize}
+
+\subsection*{SIGUIENTE (FOLLOW)}
+Tomando como símbolo inicial \texttt{romanNumber} (la tabla generada por PLY usa S' -> romanNumber) y aplicando las reglas de cálculo
+iterativo:
+\begin{itemize}
+\item $FOLLOW(romanNumber) = \{\$\}$
+\item $FOLLOW(thousand) = \{C, D, X, L, I, V, \$\}$
+\item $FOLLOW(hundred) = \{X, L, I, V, \$\}$
+\item $FOLLOW(ten) = \{I, V, \$\}$
+\item $FOLLOW(digit) = \{\$\}$
+\item $FOLLOW(small\_hundred) = FOLLOW(hundred) = \{X, L, I, V, \$\}$
+\item $FOLLOW(small\_ten) = FOLLOW(ten) = \{I, V, \$\}$
+\item $FOLLOW(small\_digit) = FOLLOW(digit) = \{\$\}$
+\item $FOLLOW(lambda)$ (símbolo de producción vacía): se usa cuando aparece en posiciones donde se acepta el siguiente terminal; su FOLLOW será el conjunto correspondiente de la posición en la que aparece (por ejemplo, FOLLOW(lambda) contiene $\{C,D,X,L,I,V,\$\}$ cuando aparece en la posición de \texttt{thousand}).
+\end{itemize}
+
+Comentarios: los conjuntos han sido deducidos de las producciones y de la observación de que muchas componentes admiten $\epsilon$ (por ejemplo \texttt{thousand}, \texttt{hundred}, \texttt{ten}, \texttt{digit}), con lo que los conjuntos FIRST se propagan a la posición siguiente y los conjuntos FOLLOW incluyen el operador fin de cadena \$.
+
+\section{Estado inicial S0 del autómata LR(1) y sus transiciones}
+A partir de \texttt{src/parser.out} se extrae el estado 0 (S0) tal cual lo genera PLY. Se incluye aquí el listado de items y las transiciones salientes:
+
+\subsection*{Estado S0 (items)}
+\begin{verbatim}
+(0) S' -> . romanNumber
+(1) romanNumber -> . thousand hundred ten digit
+(2) thousand -> . M M M
+(3) thousand -> . M M
+(4) thousand -> . M
+(5) thousand -> . lambda
+(30) lambda -> .
+\end{verbatim}
+
+\subsection*{Transiciones desde S0}
+\begin{itemize}
+\item Acciones (terminales):
+\begin{verbatim}
+  M      : shift and go to state 3
+  C, D, X, L, I, V, $end : reduce using rule 30 (lambda -> .)
+\end{verbatim}
+\item Gotos (no terminales):
+\begin{verbatim}
+  romanNumber : shift and go to state 1
+  thousand    : shift and go to state 2
+  lambda      : shift and go to state 4
+\end{verbatim}
+\end{itemize}
+
+Observación: en S0, para muchas terminales distintas de `M` la acción es reducir por la producción de la no terminal `lambda` (regla 30), porque desde el punto de vista del parser la producción `thousand -> lambda` está disponible y el lookahead determina reducción.
+
+\section{Tabla LR(1) para S0 (filtrada) y detección de conflictos}
+Mostramos la fila correspondiente al estado S0 para las columnas relevantes (terminales y gotos):
+
+\begin{tabular}{|l|l|}
+\hline
+Entrada & Acción en S0 \\\hline
+M      & shift, goto estado 3 \\\hline
+C      & reduce por regla 30 (lambda -> ) \\\hline
+D      & reduce por regla 30 (lambda -> ) \\\hline
+X      & reduce por regla 30 (lambda -> ) \\\hline
+L      & reduce por regla 30 (lambda -> ) \\\hline
+I      & reduce por regla 30 (lambda -> ) \\\hline
+V      & reduce por regla 30 (lambda -> ) \\\hline
+\$      & reduce por regla 30 (lambda -> ) \\\hline
+\hline
+Goto(thousand) & estado 2 \\\hline
+Goto(romanNumber) & estado 1 \\\hline
+Goto(lambda) & estado 4 \\\hline
+\end{tabular}
+
+Dado que en S0 no existe ninguna celda que contenga simultáneamente una acción de shift y otra de reduce para la misma terminal (por ejemplo, para \texttt{M} hay shift; para \texttt{C} hay reduce y no shift), en S0 no se detectan conflictos shift/reduce ni reduce/reduce. Por tanto, considerando únicamente S0, este estado es compatible con un autómata LR(1) sin conflictos.
+
+\section{Efecto en el proceso de análisis y ejemplos}
+\subsection*{Efecto general}
+La presencia de producciones que admiten $\epsilon$ provoca que, en los estados iniciales, el parser tenga reducciones por $\epsilon$ ante múltiples símbolos de lookahead; esto es normal y, si las reducciones no confligen con shift (como en S0), no aparece conflicto. En lenguajes con múltiples alternativas que comienzan por el mismo prefijo, el lookahead evita ambigüedades en LR(1).
+
+\subsection*{Ejemplos}
+\begin{enumerate}
+\item Cadena vacía (EOF inmediatamente):
+  - En S0 el lookahead \$ provoca reducción por \texttt{lambda} en la posición \texttt{thousand -> lambda}, y finalmente la derivación vacía se considera válida (el parser acepta la cadena vacía). Este comportamiento viene de permitir que todas las componentes (\texttt{thousand},\texttt{hundred},\texttt{ten},\texttt{digit}) deriven $\epsilon$.
+\item Entrada que comienza por \texttt{M}: \texttt{M\$}
+  - En S0 con \texttt{M} el parser hace shift y entra en la construcción de \texttt{thousand} (estado 3), lo que evita reducir por \texttt{lambda} en esa posición; esto es correcto puesto que \texttt{M} indica la presencia de miles.
+\item Entrada que comienza por \texttt{C} (por ejemplo \texttt{C\$}):
+  - En S0 con \texttt{C} se aplica la reducción por \texttt{lambda} en la producción \texttt{thousand -> lambda} (porque \texttt{C} no es \texttt{M}), y el parser seguirá analizando \texttt{hundred} a partir del siguiente estado apropiado. Esto muestra cómo el lookahead \texttt{C} permite distinguir entre tener \texttt{thousand} vacío o tener \texttt{thousand} que comience por \texttt{M}.
+\end{enumerate}
+
+\section*{Comentarios finales y comparaciones}
+Si existiera una segunda gramática (por ejemplo, una variante que permita construcciones distintas o imponiendo límites distintos en repeticiones por transformaciones de las producciones), el procedimiento para comparar ambas gramáticas sería:
+\begin{itemize}
+\item Calcular FIRST/FOLLOW para cada una y comparar conjuntos distintos.
+\item Generar \texttt{parser.out} y \texttt{parsetab.py} con PLY para cada gramática, extraer S0 y observar diferencias en items y transiciones.
+\item Rellenar la tabla LR(1) (al menos para S0) y detectar conflictos (shift/reduce o reduce/reduce) que indiquen diferencias en la capacidad de parseo LR(1).
+\end{itemize}
+
+Resultados de ejecución de tests (archivo \texttt{test\_roman.py}) y resumen de PLY:
+\begin{itemize}
+  \item G1 (\texttt{roman\_parser1.py}): ver \texttt{src/parser\_g1.out} y \texttt{parser\_g1\_run.out}. Resumen relevante extraído de los logs:
+  \begin{itemize}
+  \item Advertencias de PLY: se reportaron conflictos (por ejemplo, "3 shift/reduce conflicts" y "9 reduce/reduce conflicts" en la ejecución inicial para G1).
+  \item Resultado de los tests: 4 tests ejecutados, 2 fallos (los tests para \texttt{"XX"} y \texttt{"XII"} fallaron). En los logs se observan excepciones lanzadas por la función \texttt{p\_error} durante el parseo de esas entradas.
+  \end{itemize}
+  \item G2 (\texttt{roman\_parser2.py}): ver \texttt{src/parser\_g2.out} y \texttt{parser\_g2\_run.out}. Resumen relevante:
+  \begin{itemize}
+  \item Advertencias de PLY: la salida muestra reduce/reduce conflicts resueltos por las producciones de \texttt{lambda}; en la ejecución disponible se ven varias reducciones resueltas automáticamente.
+  \item Resultado de los tests: 4 tests ejecutados, todos PASAN (OK) con la implementación actual de G2.
+  \end{itemize}
+\end{itemize}
+
+Conclusión práctica: los ficheros de ejecución completos son \texttt{parser\_g1\_run.out} y \texttt{parser\_g2\_run.out} (están en el directorio raíz del proyecto). Si prefieres que genere también los ficheros `parsetab.py` y `parser.out` por separado, puedo re-ejecutar PLY con las opciones de depuración apropiadas o forzar la creación de `parsetab.py` desde cada parser; dímelo y lo hago antes de completar las preguntas 1–4 en detalle.
+
+\end{document}

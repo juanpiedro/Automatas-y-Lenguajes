@@ -1,0 +1,602 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> romanNumber
+Rule 1     romanNumber -> thousand hundred ten digit
+Rule 2     thousand -> M M M
+Rule 3     thousand -> M M
+Rule 4     thousand -> M
+Rule 5     thousand -> lambda
+Rule 6     low_hundreds -> C low_hundreds
+Rule 7     low_hundreds -> lambda
+Rule 8     small_hundred -> C C C
+Rule 9     small_hundred -> C C
+Rule 10    small_hundred -> C
+Rule 11    hundred -> low_hundreds
+Rule 12    hundred -> C M
+Rule 13    hundred -> C D
+Rule 14    hundred -> D low_hundreds
+Rule 15    hundred -> lambda
+Rule 16    low_tens -> X low_tens
+Rule 17    low_tens -> lambda
+Rule 18    small_ten -> X X X
+Rule 19    small_ten -> X X
+Rule 20    small_ten -> X
+Rule 21    ten -> low_tens
+Rule 22    ten -> X C
+Rule 23    ten -> X L
+Rule 24    ten -> L low_tens
+Rule 25    ten -> lambda
+Rule 26    low_units -> I low_units
+Rule 27    low_units -> lambda
+Rule 28    small_digit -> I I I
+Rule 29    small_digit -> I I
+Rule 30    small_digit -> I
+Rule 31    digit -> low_units
+Rule 32    digit -> I X
+Rule 33    digit -> I V
+Rule 34    digit -> V low_units
+Rule 35    digit -> lambda
+Rule 36    lambda -> <empty>
+Rule 37    roman -> romanNumber
+
+Terminals, with rules where they appear
+
+C                    : 6 8 8 8 9 9 10 12 13 22
+D                    : 13 14
+I                    : 26 28 28 28 29 29 30 32 33
+L                    : 23 24
+M                    : 2 2 2 3 3 4 12
+V                    : 33 34
+X                    : 16 18 18 18 19 19 20 22 23 32
+error                : 
+
+Nonterminals, with rules where they appear
+
+digit                : 1
+hundred              : 1
+lambda               : 5 7 15 17 25 27 35
+low_hundreds         : 6 11 14
+low_tens             : 16 21 24
+low_units            : 26 31 34
+roman                : 
+romanNumber          : 37 0
+small_digit          : 
+small_hundred        : 
+small_ten            : 
+ten                  : 1
+thousand             : 1
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . romanNumber
+    (1) romanNumber -> . thousand hundred ten digit
+    (2) thousand -> . M M M
+    (3) thousand -> . M M
+    (4) thousand -> . M
+    (5) thousand -> . lambda
+    (36) lambda -> .
+
+    M               shift and go to state 3
+    C               reduce using rule 36 (lambda -> .)
+    D               reduce using rule 36 (lambda -> .)
+    X               reduce using rule 36 (lambda -> .)
+    L               reduce using rule 36 (lambda -> .)
+    I               reduce using rule 36 (lambda -> .)
+    V               reduce using rule 36 (lambda -> .)
+    $end            reduce using rule 36 (lambda -> .)
+
+    romanNumber                    shift and go to state 1
+    thousand                       shift and go to state 2
+    lambda                         shift and go to state 4
+
+state 1
+
+    (0) S' -> romanNumber .
+
+
+
+state 2
+
+    (1) romanNumber -> thousand . hundred ten digit
+    (11) hundred -> . low_hundreds
+    (12) hundred -> . C M
+    (13) hundred -> . C D
+    (14) hundred -> . D low_hundreds
+    (15) hundred -> . lambda
+    (6) low_hundreds -> . C low_hundreds
+    (7) low_hundreds -> . lambda
+    (36) lambda -> .
+
+    C               shift and go to state 7
+    D               shift and go to state 8
+    X               reduce using rule 36 (lambda -> .)
+    L               reduce using rule 36 (lambda -> .)
+    I               reduce using rule 36 (lambda -> .)
+    V               reduce using rule 36 (lambda -> .)
+    $end            reduce using rule 36 (lambda -> .)
+
+    hundred                        shift and go to state 5
+    low_hundreds                   shift and go to state 6
+    lambda                         shift and go to state 9
+
+state 3
+
+    (2) thousand -> M . M M
+    (3) thousand -> M . M
+    (4) thousand -> M .
+
+    M               shift and go to state 10
+    C               reduce using rule 4 (thousand -> M .)
+    D               reduce using rule 4 (thousand -> M .)
+    X               reduce using rule 4 (thousand -> M .)
+    L               reduce using rule 4 (thousand -> M .)
+    I               reduce using rule 4 (thousand -> M .)
+    V               reduce using rule 4 (thousand -> M .)
+    $end            reduce using rule 4 (thousand -> M .)
+
+
+state 4
+
+    (5) thousand -> lambda .
+
+    C               reduce using rule 5 (thousand -> lambda .)
+    D               reduce using rule 5 (thousand -> lambda .)
+    X               reduce using rule 5 (thousand -> lambda .)
+    L               reduce using rule 5 (thousand -> lambda .)
+    I               reduce using rule 5 (thousand -> lambda .)
+    V               reduce using rule 5 (thousand -> lambda .)
+    $end            reduce using rule 5 (thousand -> lambda .)
+
+
+state 5
+
+    (1) romanNumber -> thousand hundred . ten digit
+    (21) ten -> . low_tens
+    (22) ten -> . X C
+    (23) ten -> . X L
+    (24) ten -> . L low_tens
+    (25) ten -> . lambda
+    (16) low_tens -> . X low_tens
+    (17) low_tens -> . lambda
+    (36) lambda -> .
+
+    X               shift and go to state 13
+    L               shift and go to state 14
+    I               reduce using rule 36 (lambda -> .)
+    V               reduce using rule 36 (lambda -> .)
+    $end            reduce using rule 36 (lambda -> .)
+
+    ten                            shift and go to state 11
+    low_tens                       shift and go to state 12
+    lambda                         shift and go to state 15
+
+state 6
+
+    (11) hundred -> low_hundreds .
+
+    X               reduce using rule 11 (hundred -> low_hundreds .)
+    L               reduce using rule 11 (hundred -> low_hundreds .)
+    I               reduce using rule 11 (hundred -> low_hundreds .)
+    V               reduce using rule 11 (hundred -> low_hundreds .)
+    $end            reduce using rule 11 (hundred -> low_hundreds .)
+
+
+state 7
+
+    (12) hundred -> C . M
+    (13) hundred -> C . D
+    (6) low_hundreds -> C . low_hundreds
+    (6) low_hundreds -> . C low_hundreds
+    (7) low_hundreds -> . lambda
+    (36) lambda -> .
+
+    M               shift and go to state 17
+    D               shift and go to state 18
+    C               shift and go to state 16
+    X               reduce using rule 36 (lambda -> .)
+    L               reduce using rule 36 (lambda -> .)
+    I               reduce using rule 36 (lambda -> .)
+    V               reduce using rule 36 (lambda -> .)
+    $end            reduce using rule 36 (lambda -> .)
+
+    low_hundreds                   shift and go to state 19
+    lambda                         shift and go to state 20
+
+state 8
+
+    (14) hundred -> D . low_hundreds
+    (6) low_hundreds -> . C low_hundreds
+    (7) low_hundreds -> . lambda
+    (36) lambda -> .
+
+    C               shift and go to state 16
+    X               reduce using rule 36 (lambda -> .)
+    L               reduce using rule 36 (lambda -> .)
+    I               reduce using rule 36 (lambda -> .)
+    V               reduce using rule 36 (lambda -> .)
+    $end            reduce using rule 36 (lambda -> .)
+
+    low_hundreds                   shift and go to state 21
+    lambda                         shift and go to state 20
+
+state 9
+
+    (15) hundred -> lambda .
+    (7) low_hundreds -> lambda .
+
+  ! reduce/reduce conflict for X resolved using rule 7 (low_hundreds -> lambda .)
+  ! reduce/reduce conflict for L resolved using rule 7 (low_hundreds -> lambda .)
+  ! reduce/reduce conflict for I resolved using rule 7 (low_hundreds -> lambda .)
+  ! reduce/reduce conflict for V resolved using rule 7 (low_hundreds -> lambda .)
+  ! reduce/reduce conflict for $end resolved using rule 7 (low_hundreds -> lambda .)
+    X               reduce using rule 7 (low_hundreds -> lambda .)
+    L               reduce using rule 7 (low_hundreds -> lambda .)
+    I               reduce using rule 7 (low_hundreds -> lambda .)
+    V               reduce using rule 7 (low_hundreds -> lambda .)
+    $end            reduce using rule 7 (low_hundreds -> lambda .)
+
+  ! X               [ reduce using rule 15 (hundred -> lambda .) ]
+  ! L               [ reduce using rule 15 (hundred -> lambda .) ]
+  ! I               [ reduce using rule 15 (hundred -> lambda .) ]
+  ! V               [ reduce using rule 15 (hundred -> lambda .) ]
+  ! $end            [ reduce using rule 15 (hundred -> lambda .) ]
+
+
+state 10
+
+    (2) thousand -> M M . M
+    (3) thousand -> M M .
+
+    M               shift and go to state 22
+    C               reduce using rule 3 (thousand -> M M .)
+    D               reduce using rule 3 (thousand -> M M .)
+    X               reduce using rule 3 (thousand -> M M .)
+    L               reduce using rule 3 (thousand -> M M .)
+    I               reduce using rule 3 (thousand -> M M .)
+    V               reduce using rule 3 (thousand -> M M .)
+    $end            reduce using rule 3 (thousand -> M M .)
+
+
+state 11
+
+    (1) romanNumber -> thousand hundred ten . digit
+    (31) digit -> . low_units
+    (32) digit -> . I X
+    (33) digit -> . I V
+    (34) digit -> . V low_units
+    (35) digit -> . lambda
+    (26) low_units -> . I low_units
+    (27) low_units -> . lambda
+    (36) lambda -> .
+
+    I               shift and go to state 25
+    V               shift and go to state 26
+    $end            reduce using rule 36 (lambda -> .)
+
+    digit                          shift and go to state 23
+    low_units                      shift and go to state 24
+    lambda                         shift and go to state 27
+
+state 12
+
+    (21) ten -> low_tens .
+
+    I               reduce using rule 21 (ten -> low_tens .)
+    V               reduce using rule 21 (ten -> low_tens .)
+    $end            reduce using rule 21 (ten -> low_tens .)
+
+
+state 13
+
+    (22) ten -> X . C
+    (23) ten -> X . L
+    (16) low_tens -> X . low_tens
+    (16) low_tens -> . X low_tens
+    (17) low_tens -> . lambda
+    (36) lambda -> .
+
+    C               shift and go to state 29
+    L               shift and go to state 30
+    X               shift and go to state 28
+    I               reduce using rule 36 (lambda -> .)
+    V               reduce using rule 36 (lambda -> .)
+    $end            reduce using rule 36 (lambda -> .)
+
+    low_tens                       shift and go to state 31
+    lambda                         shift and go to state 32
+
+state 14
+
+    (24) ten -> L . low_tens
+    (16) low_tens -> . X low_tens
+    (17) low_tens -> . lambda
+    (36) lambda -> .
+
+    X               shift and go to state 28
+    I               reduce using rule 36 (lambda -> .)
+    V               reduce using rule 36 (lambda -> .)
+    $end            reduce using rule 36 (lambda -> .)
+
+    low_tens                       shift and go to state 33
+    lambda                         shift and go to state 32
+
+state 15
+
+    (25) ten -> lambda .
+    (17) low_tens -> lambda .
+
+  ! reduce/reduce conflict for I resolved using rule 17 (low_tens -> lambda .)
+  ! reduce/reduce conflict for V resolved using rule 17 (low_tens -> lambda .)
+  ! reduce/reduce conflict for $end resolved using rule 17 (low_tens -> lambda .)
+    I               reduce using rule 17 (low_tens -> lambda .)
+    V               reduce using rule 17 (low_tens -> lambda .)
+    $end            reduce using rule 17 (low_tens -> lambda .)
+
+  ! I               [ reduce using rule 25 (ten -> lambda .) ]
+  ! V               [ reduce using rule 25 (ten -> lambda .) ]
+  ! $end            [ reduce using rule 25 (ten -> lambda .) ]
+
+
+state 16
+
+    (6) low_hundreds -> C . low_hundreds
+    (6) low_hundreds -> . C low_hundreds
+    (7) low_hundreds -> . lambda
+    (36) lambda -> .
+
+    C               shift and go to state 16
+    X               reduce using rule 36 (lambda -> .)
+    L               reduce using rule 36 (lambda -> .)
+    I               reduce using rule 36 (lambda -> .)
+    V               reduce using rule 36 (lambda -> .)
+    $end            reduce using rule 36 (lambda -> .)
+
+    low_hundreds                   shift and go to state 19
+    lambda                         shift and go to state 20
+
+state 17
+
+    (12) hundred -> C M .
+
+    X               reduce using rule 12 (hundred -> C M .)
+    L               reduce using rule 12 (hundred -> C M .)
+    I               reduce using rule 12 (hundred -> C M .)
+    V               reduce using rule 12 (hundred -> C M .)
+    $end            reduce using rule 12 (hundred -> C M .)
+
+
+state 18
+
+    (13) hundred -> C D .
+
+    X               reduce using rule 13 (hundred -> C D .)
+    L               reduce using rule 13 (hundred -> C D .)
+    I               reduce using rule 13 (hundred -> C D .)
+    V               reduce using rule 13 (hundred -> C D .)
+    $end            reduce using rule 13 (hundred -> C D .)
+
+
+state 19
+
+    (6) low_hundreds -> C low_hundreds .
+
+    X               reduce using rule 6 (low_hundreds -> C low_hundreds .)
+    L               reduce using rule 6 (low_hundreds -> C low_hundreds .)
+    I               reduce using rule 6 (low_hundreds -> C low_hundreds .)
+    V               reduce using rule 6 (low_hundreds -> C low_hundreds .)
+    $end            reduce using rule 6 (low_hundreds -> C low_hundreds .)
+
+
+state 20
+
+    (7) low_hundreds -> lambda .
+
+    X               reduce using rule 7 (low_hundreds -> lambda .)
+    L               reduce using rule 7 (low_hundreds -> lambda .)
+    I               reduce using rule 7 (low_hundreds -> lambda .)
+    V               reduce using rule 7 (low_hundreds -> lambda .)
+    $end            reduce using rule 7 (low_hundreds -> lambda .)
+
+
+state 21
+
+    (14) hundred -> D low_hundreds .
+
+    X               reduce using rule 14 (hundred -> D low_hundreds .)
+    L               reduce using rule 14 (hundred -> D low_hundreds .)
+    I               reduce using rule 14 (hundred -> D low_hundreds .)
+    V               reduce using rule 14 (hundred -> D low_hundreds .)
+    $end            reduce using rule 14 (hundred -> D low_hundreds .)
+
+
+state 22
+
+    (2) thousand -> M M M .
+
+    C               reduce using rule 2 (thousand -> M M M .)
+    D               reduce using rule 2 (thousand -> M M M .)
+    X               reduce using rule 2 (thousand -> M M M .)
+    L               reduce using rule 2 (thousand -> M M M .)
+    I               reduce using rule 2 (thousand -> M M M .)
+    V               reduce using rule 2 (thousand -> M M M .)
+    $end            reduce using rule 2 (thousand -> M M M .)
+
+
+state 23
+
+    (1) romanNumber -> thousand hundred ten digit .
+
+    $end            reduce using rule 1 (romanNumber -> thousand hundred ten digit .)
+
+
+state 24
+
+    (31) digit -> low_units .
+
+    $end            reduce using rule 31 (digit -> low_units .)
+
+
+state 25
+
+    (32) digit -> I . X
+    (33) digit -> I . V
+    (26) low_units -> I . low_units
+    (26) low_units -> . I low_units
+    (27) low_units -> . lambda
+    (36) lambda -> .
+
+    X               shift and go to state 35
+    V               shift and go to state 36
+    I               shift and go to state 34
+    $end            reduce using rule 36 (lambda -> .)
+
+    low_units                      shift and go to state 37
+    lambda                         shift and go to state 38
+
+state 26
+
+    (34) digit -> V . low_units
+    (26) low_units -> . I low_units
+    (27) low_units -> . lambda
+    (36) lambda -> .
+
+    I               shift and go to state 34
+    $end            reduce using rule 36 (lambda -> .)
+
+    low_units                      shift and go to state 39
+    lambda                         shift and go to state 38
+
+state 27
+
+    (35) digit -> lambda .
+    (27) low_units -> lambda .
+
+  ! reduce/reduce conflict for $end resolved using rule 27 (low_units -> lambda .)
+    $end            reduce using rule 27 (low_units -> lambda .)
+
+  ! $end            [ reduce using rule 35 (digit -> lambda .) ]
+
+
+state 28
+
+    (16) low_tens -> X . low_tens
+    (16) low_tens -> . X low_tens
+    (17) low_tens -> . lambda
+    (36) lambda -> .
+
+    X               shift and go to state 28
+    I               reduce using rule 36 (lambda -> .)
+    V               reduce using rule 36 (lambda -> .)
+    $end            reduce using rule 36 (lambda -> .)
+
+    low_tens                       shift and go to state 31
+    lambda                         shift and go to state 32
+
+state 29
+
+    (22) ten -> X C .
+
+    I               reduce using rule 22 (ten -> X C .)
+    V               reduce using rule 22 (ten -> X C .)
+    $end            reduce using rule 22 (ten -> X C .)
+
+
+state 30
+
+    (23) ten -> X L .
+
+    I               reduce using rule 23 (ten -> X L .)
+    V               reduce using rule 23 (ten -> X L .)
+    $end            reduce using rule 23 (ten -> X L .)
+
+
+state 31
+
+    (16) low_tens -> X low_tens .
+
+    I               reduce using rule 16 (low_tens -> X low_tens .)
+    V               reduce using rule 16 (low_tens -> X low_tens .)
+    $end            reduce using rule 16 (low_tens -> X low_tens .)
+
+
+state 32
+
+    (17) low_tens -> lambda .
+
+    I               reduce using rule 17 (low_tens -> lambda .)
+    V               reduce using rule 17 (low_tens -> lambda .)
+    $end            reduce using rule 17 (low_tens -> lambda .)
+
+
+state 33
+
+    (24) ten -> L low_tens .
+
+    I               reduce using rule 24 (ten -> L low_tens .)
+    V               reduce using rule 24 (ten -> L low_tens .)
+    $end            reduce using rule 24 (ten -> L low_tens .)
+
+
+state 34
+
+    (26) low_units -> I . low_units
+    (26) low_units -> . I low_units
+    (27) low_units -> . lambda
+    (36) lambda -> .
+
+    I               shift and go to state 34
+    $end            reduce using rule 36 (lambda -> .)
+
+    low_units                      shift and go to state 37
+    lambda                         shift and go to state 38
+
+state 35
+
+    (32) digit -> I X .
+
+    $end            reduce using rule 32 (digit -> I X .)
+
+
+state 36
+
+    (33) digit -> I V .
+
+    $end            reduce using rule 33 (digit -> I V .)
+
+
+state 37
+
+    (26) low_units -> I low_units .
+
+    $end            reduce using rule 26 (low_units -> I low_units .)
+
+
+state 38
+
+    (27) low_units -> lambda .
+
+    $end            reduce using rule 27 (low_units -> lambda .)
+
+
+state 39
+
+    (34) digit -> V low_units .
+
+    $end            reduce using rule 34 (digit -> V low_units .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: reduce/reduce conflict in state 9 resolved using rule (low_hundreds -> lambda)
+WARNING: rejected rule (hundred -> lambda) in state 9
+WARNING: reduce/reduce conflict in state 15 resolved using rule (low_tens -> lambda)
+WARNING: rejected rule (ten -> lambda) in state 15
+WARNING: reduce/reduce conflict in state 27 resolved using rule (low_units -> lambda)
+WARNING: rejected rule (digit -> lambda) in state 27
+WARNING: Rule (hundred -> lambda) is never reduced
+WARNING: Rule (ten -> lambda) is never reduced
+WARNING: Rule (digit -> lambda) is never reduced
